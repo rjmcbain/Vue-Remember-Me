@@ -2,14 +2,20 @@
   <base-card>
     <base-button
       type="Stored Resources"
+      :mode="storedResButtonMode"
       @click="setSelectedTab('stored-resources')"
       >Stored Resources</base-button
     >
-    <base-button type="Add Resource" @click="setSelectedTab('add-resource')"
+    <base-button
+      type="Add Resource"
+      :mode="addResButtonMode"
+      @click="setSelectedTab('add-resource')"
       >Add Resource</base-button
     >
   </base-card>
-  <component :is="selectedTab"></component>
+  <keep-alive>
+    <component :is="selectedTab"></component>
+  </keep-alive>
 </template>
 
 <script>
@@ -35,9 +41,17 @@ export default {
           link: "https://vuejs.org",
         },
         {
+          id: "stackoverflow",
+          title: "Stack Overflow",
+          description:
+            "A public platform building the definitive collection of coding questions & answers",
+          link: "https://stackoverflow.com/",
+        },
+        {
           id: "google",
           title: "Google",
-          description: "Learn to google...",
+          description:
+            "Provides users with the most relevant, highest quality results based on user search queries",
           link: "https://www.google.com",
         },
       ],
@@ -46,11 +60,38 @@ export default {
   provide() {
     return {
       resources: this.storedResources,
+      addResource: this.addResource,
+      deleteResource: this.removeResource,
     };
+  },
+  computed: {
+    storedResButtonMode() {
+      return this.selectedTab === "stored-resources" ? null : "flat";
+    },
+    addResButtonMode() {
+      return this.selectedTab === "add-resource" ? null : "flat";
+    },
   },
   methods: {
     setSelectedTab(tab) {
       this.selectedTab = tab;
+    },
+    addResource(title, description, url) {
+      const newResource = {
+        id: new Date().toISOString(),
+        title: title,
+        description,
+        description,
+        link: url,
+      };
+      this.storedResources.unshift(newResource);
+      this.selectedTab = "stored-resources";
+    },
+    removeResource(resId) {
+      const resIndex = this.storedResources.findIndex(
+        (res) => res.id === resId
+      );
+      this.storedResources.splice(resIndex, 1);
     },
   },
 };

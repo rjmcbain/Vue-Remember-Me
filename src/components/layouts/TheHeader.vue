@@ -8,7 +8,7 @@
 export default {
   data() {
     return {
-      title: "Remember Me",
+      title: "Resources",
     };
   },
 };
